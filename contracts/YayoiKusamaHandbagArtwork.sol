@@ -1,7 +1,7 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-import "@openzeppelin/contracts/access/AccessControl.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 import "@openzeppelin/contracts/utils/cryptography/draft-EIP712.sol";
 import "./ERC721A.sol";
@@ -10,14 +10,12 @@ import "./ERC721A.sol";
  @title Artwork NFT by Yayoi Kusama
  @author Japan NFT Culture Association (https://www.jnca.io)
  */
-contract YayoiKusamaHandbagArtwork is ERC721A, EIP712, AccessControl {
+contract YayoiKusamaHandbagArtwork is ERC721A, EIP712, Ownable {
     uint16 private constant MAX_SUPPLY = 7000;
 
     uint16 private constant WHITELIST_MAX_SUPPLY = 3000;
 
     uint8 private constant BATCH_MINT_SIZE = 5;
-
-    bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
 
     string private _contractURI;
 
@@ -46,7 +44,6 @@ contract YayoiKusamaHandbagArtwork is ERC721A, EIP712, AccessControl {
         string memory initContractURI,
         string memory initBaseURI,
         address payable receiver,
-        address defaultAdmin,
         uint104 publicPrice,
         uint104 whitelistPrice
     )
@@ -58,15 +55,12 @@ contract YayoiKusamaHandbagArtwork is ERC721A, EIP712, AccessControl {
         )
         EIP712("YKHA", "1")
     {
-        _setRoleAdmin(ADMIN_ROLE, DEFAULT_ADMIN_ROLE);
-        _setupRole(DEFAULT_ADMIN_ROLE, defaultAdmin);
-        _setupRole(ADMIN_ROLE, defaultAdmin);
-        _setupRole(ADMIN_ROLE, _msgSender());
         _contractURI = initContractURI;
         _tokenBaseURI = initBaseURI;
         _fundReceiver = receiver;
         saleInfo.isPublic = false;
         saleInfo.publicPrice = publicPrice;
+        saleInfo.isWhitelist = false;
         saleInfo.whitelistPrice = whitelistPrice;
         saleInfo.whitelistSupply = 0;
     }
@@ -90,6 +84,7 @@ contract YayoiKusamaHandbagArtwork is ERC721A, EIP712, AccessControl {
         payable
     {
         _verify(signature);
+        require(saleInfo.isWhitelist, "not in whitelist sale");
         require(totalSupply() + amount <= MAX_SUPPLY, "exceed max supply");
         require(
             saleInfo.whitelistSupply + amount <= WHITELIST_MAX_SUPPLY,
@@ -113,19 +108,27 @@ contract YayoiKusamaHandbagArtwork is ERC721A, EIP712, AccessControl {
     /// @dev Change base URI to reveal NFT
     function setBaseURI(string calldata newBaseURI)
         external
-        onlyRole(ADMIN_ROLE)
+        onlyOwner
     {
         _tokenBaseURI = newBaseURI;
     }
 
     /// @dev Flip public sale state
-    function flipPublicSale() external onlyRole(ADMIN_ROLE) {
+    function flipPublicSale() external onlyOwner {
         saleInfo.isPublic = !saleInfo.isPublic;
     }
 
     /// @dev Flip whitelist sale state
-    function flipWhitelistSale() external onlyRole(ADMIN_ROLE) {
+    function flipWhitelistSale() external onlyOwner {
         saleInfo.isWhitelist = !saleInfo.isWhitelist;
+    }
+
+    /// @dev Update sale info (without changing whitelist supply)
+    function updateSaleInfo(SaleInfo calldata newSaleInfo) external onlyOwner {
+        saleInfo.isPublic = newSaleInfo.isPublic;
+        saleInfo.publicPrice = newSaleInfo.publicPrice;
+        saleInfo.isWhitelist = newSaleInfo.isWhitelist;
+        saleInfo.whitelistPrice = newSaleInfo.whitelistPrice;
     }
 
     /// @dev Override ERC721._baseURI
@@ -144,19 +147,8 @@ contract YayoiKusamaHandbagArtwork is ERC721A, EIP712, AccessControl {
             )
         );
         require(
-            hasRole(ADMIN_ROLE, ECDSA.recover(digest, signature)),
+            owner() == ECDSA.recover(digest, signature),
             "invalid or unauthorized"
         );
-    }
-
-    /// @dev Override interface
-    function supportsInterface(bytes4 interfaceId)
-        public
-        view
-        virtual
-        override(ERC721A, AccessControl)
-        returns (bool)
-    {
-        return super.supportsInterface(interfaceId);
     }
 }

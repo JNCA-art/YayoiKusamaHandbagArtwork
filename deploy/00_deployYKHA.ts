@@ -21,16 +21,10 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       DEPLOY_PARAM.initCoutractURI,
       DEPLOY_PARAM.initBaseURI,
       DEPLOY_PARAM.receiver,
-      DEPLOY_PARAM.admin,
       DEPLOY_PARAM.publicPrice,
       DEPLOY_PARAM.whitelsitPrice,
     ]
   });
-
-  if (deployResult && !isMainnet) {
-    await execute("YayoiKusamaHandbagArtwork", { from: deployer }, "flipPublicSale");
-    await execute("YayoiKusamaHandbagArtwork", { from: deployer }, "flipWhitelistSale");
-  }
   console.log("YayoiKusamaHandbagArtwork:", deployResult.address);
 };
 export default func;
