@@ -35,11 +35,14 @@
       '0x539': '0x5FbDB2315678afecb367f032d93F642f64180aa3',
     };
 
+    const TEST_PRICE = new BigNumber('12e+15');
+    const REAL_PRICE = new BigNumber('12e+17');
+
     async function mint() {
       const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
       const chainId = await ethereum.request({ method: 'eth_chainId' });
       console.log("chainId:", chainId);
-      const mintPrice = chainId === '0x1' ? new BigNumber("12e+17") : new BigNumber("12e+15");
+      const mintPrice = chainId === '0x1' ? REAL_PRICE : TEST_PRICE;
       const contractAddress = CONTRACT_ADDRESS_MAP[chainId];
       if (!contractAddress) return;
       console.log("contract:", contractAddress);

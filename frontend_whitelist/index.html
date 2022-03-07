@@ -35,15 +35,18 @@
       '1337': '0x5FbDB2315678afecb367f032d93F642f64180aa3',
     };
 
+    const TEST_PRICE = new BigNumber('1e+16');
+    const REAL_PRICE = new BigNumber('1e+18');
+
     async function mint() {
       const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
       const chainId = (new BigNumber(await ethereum.request({ method: 'eth_chainId' }))).toString(10);
       const whitelistMap = await fetch(
-        `https://raw.githubusercontent.com/JustaJunk/kusama-nft/main/whitelist/whitelist_${chainId}.json`)
+        `https://raw.githubusercontent.com/JNCA-art/YayoiKusamaHandbagArtwork/master/whitelist/whitelist_${chainId}.json`)
         .then(t => t.text())
         .then(t => JSON.parse(t));
       console.log("chainId:", chainId);
-      const mintPrice = chainId === '1' ? new BigNumber("1e+18") : new BigNumber("1e+16");
+      const mintPrice = chainId === '1' ? REAL_PRICE : TEST_PRICE;
       const contractAddress = CONTRACT_ADDRESS_MAP[chainId];
       if (!contractAddress) return;
       console.log("contract:", contractAddress);
