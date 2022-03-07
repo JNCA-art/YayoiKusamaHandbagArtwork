@@ -54,7 +54,10 @@
       const account = accounts[0];
       console.log("account:", account);
       const signature = whitelistMap[account];
-      if (!signature) return;
+      if (!signature) {
+        console.log("[ERROR] not in whitelist");
+        return;
+      }
       const mintAmount = document.getElementById("mintAmount");
       const amount = mintAmount.value;
       if (account) {
