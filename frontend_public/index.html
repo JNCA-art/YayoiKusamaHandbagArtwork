@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>JNCO (public)</title>
+</head>
+
+<body>
+
+  <h2>YKHA (public)</h2>
+
+  <form name="wf-form-NFT-form" data-name="NFT form" aria-label="NFT form" onsubmit="mint(); return false">
+    <label for="mintAmount">Mint Amount</label>
+    <select id="mintAmount" name="number" data-name="number" class="w-select">
+      <option value="1">1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="4">4</option>
+      <option value="5">5</option>
+    </select>
+    <input type="submit" value="Mint" data-wait="Please wait..." id="mintButton" class="button-2 mint w-button">
+  </form>
+
+  <script src='https://cdn.jsdelivr.net/npm/bignumber.js@9.0.2/bignumber.min.js'></script>
+  <script>
+    if (typeof window.ethereum !== 'undefined') {
+      console.log('MetaMask is installed!');
+    }
+    else {
+      console.log('MetaMask not installed!');
+    }
+
+    const CONTRACT_ADDRESS_MAP = {
+      '0x4': '0xDa4df28B9961Bf5AFC72c6ddd8e7A6818077A66f',
+      '0x539': '0x5FbDB2315678afecb367f032d93F642f64180aa3',
+    };
+
+    async function mint() {
+      const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+      const chainId = await ethereum.request({ method: 'eth_chainId' });
+      console.log("chainId:", chainId);
+      const mintPrice = chainId === '0x1' ? new BigNumber("12e+17") : new BigNumber("12e+15");
+      const contractAddress = CONTRACT_ADDRESS_MAP[chainId];
+      if (!contractAddress) return;
+      console.log("contract:", contractAddress);
+      const account = accounts[0];
+      console.log("account:", account);
+      const mintAmount = document.getElementById("mintAmount");
+      const amount = mintAmount.value;
+      if (account) {
+        const transactionParameters = {
+          // Contract address
+          to: contractAddress,
+          // User's active address
+          from: ethereum.selectedAddress,
+          // Hex-encoded mint price
+          value: mintPrice.times(amount).toString(16),
+          // defining interaction data
+          data:
+            '0xa0712d68' // mint (4 bytes as function selector)
+            + amount.padStart(32 * 2, '0') // amount (pad to 32 bytes)
+        };
+        console.log("mint:", amount, "token");
+        const txHash = await ethereum.request({
+          method: 'eth_sendTransaction',
+          params: [transactionParameters],
+        });
+        console.log("tx:", txHash);
+      }
+    }
+  </script>
+</body>
+
+</html>

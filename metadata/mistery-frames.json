@@ -1,0 +1,11 @@
+{
+    "name": "Mistery Frames #",
+    "description": "Create by JNCA",
+    "image": "",
+    "attribute": [
+        {
+            "trait_type": "type",
+            "value": "mistery"
+        }
+    ]
+}

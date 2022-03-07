@@ -1,0 +1,11 @@
+{
+  "name": "The Original",
+  "description": "Create by JNCA",
+  "image": "ipfs://QmeaZWsuh8kEZRjx4ytyGoFEMr9Lp52K7NcdudVCrJ2uEZ/the-original.png",
+  "attributes": [
+    {
+      "trait_type": "type",
+      "value": "the original"
+    }
+  ]
+}
