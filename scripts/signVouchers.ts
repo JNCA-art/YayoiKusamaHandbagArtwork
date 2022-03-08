@@ -14,7 +14,7 @@ const VOUCHER_TYPE: Record<string, TypedDataField[]> = {
 type AddressMap = { [chainId: string]: string };
 export const CONTRACT_ADDRESS: AddressMap = {
   "1": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
-  "4": "0x8B9d86A77Cc1Cd41374D3045692Fb706FdaE0452",
+  "4": "0x496C13134Ac33247E51bf8C8A42A68044214602A",
   "1337": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
 };
 
