@@ -23,9 +23,9 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       DEPLOY_PARAM.receiver,
       DEPLOY_PARAM.publicPrice,
       DEPLOY_PARAM.whitelsitPrice,
-    ]
+    ],
+    log: true,
   });
-  console.log("YayoiKusamaHandbagArtwork:", deployResult.address);
 };
 export default func;
 func.tags = ["YKHA"];
