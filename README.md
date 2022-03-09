@@ -1,10 +1,11 @@
 # Yayoi Kusama Handbag Artwork (YKHA)
 
-## 單元測試
+## 單元測試及覆蓋率
 ```
 yarn
-yarn compile
-yarn test
+yarn hardhat compile
+yarn hardhat test
+yarn hardhat coverage
 ```
 
 ## 白名單頁面
@@ -50,6 +51,10 @@ yarn http-server -c-1
 ```
 
 - withdraw: 提領所有資金到指定錢包
+```
+條件：
+1. 必須進到receiver錢包
+```
 
 - setBaseURI: 解盲
 ```

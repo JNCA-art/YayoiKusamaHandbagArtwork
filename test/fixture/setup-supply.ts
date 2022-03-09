@@ -1,6 +1,5 @@
 import { deployments } from "hardhat";
 import { YayoiKusamaHandbagArtwork__factory } from "../../typechain";
-import DEPLOY_PARAM from "../../deploy-param.json";
 
 export const setupTest = deployments.createFixture(
     async ({deployments, ethers}, options) => {
@@ -8,21 +7,23 @@ export const setupTest = deployments.createFixture(
       const artifact = await deployments.get("YayoiKusamaHandbagArtwork");
       const [owner, ...users] = await ethers.getSigners();
       const contract = YayoiKusamaHandbagArtwork__factory.connect(artifact.address, owner);
-      const receiver = DEPLOY_PARAM.receiver;
-      const provider = owner.provider;
+      let tx;
+      tx = await contract.flipPublicSale();
+      await tx.wait();
+      tx = await contract.flipWhitelistSale();
+      await tx.wait();
       const { publicPrice, whitelistPrice } = await contract.saleInfo();
-      const baseURI = DEPLOY_PARAM.initBaseURI;
-      const contractURI = DEPLOY_PARAM.initCoutractURI;
+      const batchSize = 5;
+      const turns = 7000/batchSize;
+      const cost = publicPrice.mul(batchSize);
+      for (let idx = 0; idx < turns; idx++) {
+          await contract.mint(batchSize, { value: cost })
+      }
       return {
-        owner,
-        users,
         contract,
-        receiver,
-        provider,
+        users,
         publicPrice,
         whitelistPrice,
-        baseURI,
-        contractURI,
       }
     }
   )

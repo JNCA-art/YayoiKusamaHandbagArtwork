@@ -4,14 +4,14 @@ import { setupTest } from "./fixture/setup-nothing";
 describe("YKHA public mint", function () {
   let tx;
 
-  it("Negative: not in public mint stage", async function() {
+  it("Negative: not in public sale", async function() {
     const { contract, users, publicPrice } = await setupTest();
     await expect(contract.connect(users[2]).mint(1, { value: publicPrice }))
     .revertedWith("not in public sale");
   });
 
   it("Negative: not the owner to flip", async function() {
-    const { contract, users, publicPrice } = await setupTest();
+    const { contract, users } = await setupTest();
     await expect(contract.connect(users[3]).flipPublicSale())
     .revertedWith("Ownable: caller is not the owner");
   });
@@ -24,18 +24,6 @@ describe("YKHA public mint", function () {
     await expect(contract.connect(users[4]).mint(amount, { value: publicPrice.mul(amount)}))
     .revertedWith("ERC721A: quantity to mint too high");
   });
-
-  // it("Negative: exceed max supply", async function() {
-  //   const { contract, users, publicPrice } = await setupTest();
-  //   tx = await contract.flipPublicSale();
-  //   await tx.wait();
-  //   for (let idx = 0; idx < 1400; idx++) {
-  //     tx = await contract.connect(users[idx%10]).mint(5, { value: publicPrice.mul(5) });
-  //     await tx.wait();
-  //   }
-  //   await expect(contract.connect(users[5]).mint(1, { value: publicPrice }))
-  //   .revertedWith("exceed max supply");
-  // });
 
   it("Negative: payment too low", async function() {
     const { contract, users, publicPrice } = await setupTest();
@@ -65,6 +53,9 @@ describe("YKHA public mint", function () {
     const fund = publicPrice.mul(amount);
     tx = await contract.connect(users[8]).mint(amount, { value: fund });
     await tx.wait();
+    const currentSaleInfo = await contract.saleInfo();
+    expect(currentSaleInfo.whitelistSupply).equal(0);
+    expect(await contract.totalSupply()).equal(amount);
     tx = await contract.connect(users[10]).withdraw();
     await tx.wait();
     expect(balanceBefore.add(fund)).equal(await provider.getBalance(receiver));
