@@ -15,7 +15,21 @@ describe("YKHA whitelist mint", function () {
       const { contract, users, whitelistPrice } = await setupTest();
       const user = users[2];
       const signature = getSignature(user);
-      await expect(contract.connect(users[2]).whitelistMint(signature, 1, { value: whitelistPrice }))
+      await expect(contract.connect(user).whitelistMint(signature, 1, { value: whitelistPrice }))
       .revertedWith("not in whitelist sale");
+    });
+
+    it("Negative: exceed whitelist supply", async function() {
+      const { contract, users, whitelistPrice } = await setupTest();
+    });
+
+    it("Positive: whitelist mint 1 token", async function() {
+      const { contract, users, publicPrice } = await setupTest();
+      const user = users[3];
+      const signature = getSignature(user);
+      tx = await contract.flipWhitelistSale();
+      await tx.wait();
+      tx = await contract.connect(user).whitelistMint(signature, 1, { value: publicPrice });
+      await tx.wait();
     });
 });

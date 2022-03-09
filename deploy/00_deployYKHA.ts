@@ -13,6 +13,11 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     DEPLOY_PARAM.publicPrice = ethers.utils.parseEther("0.012").toString();
     DEPLOY_PARAM.whitelsitPrice = ethers.utils.parseEther("0.01").toString();
   }
+  else {
+    if (!ethers.utils.parseEther("1.2").eq(DEPLOY_PARAM.publicPrice)) return;
+    if (!ethers.utils.parseEther("1").eq(DEPLOY_PARAM.whitelsitPrice)) return;
+  }
+
 
   // deploy
   const deployResult = await deploy("YayoiKusamaHandbagArtwork", {
