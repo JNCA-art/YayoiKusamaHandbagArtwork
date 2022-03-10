@@ -16,9 +16,12 @@ export const setupTest = deployments.createFixture(
       const batchSize = 5;
       const turns = 7000/batchSize;
       const cost = publicPrice.mul(batchSize);
-      for (let idx = 0; idx < turns; idx++) {
-          await contract.mint(batchSize, { value: cost })
-      }
+      const indices = [...Array(turns).keys()];
+      await Promise.all(
+        indices.map(async (idx) => {
+            await contract.mint(batchSize, { value: cost });
+        }) 
+      );
       return {
         contract,
         users,
