@@ -3268,6 +3268,11 @@ env-paths@^2.2.0:
   resolved "https://registry.yarnpkg.com/env-paths/-/env-paths-2.2.1.tgz#420399d416ce1fbe9bc0a07c62fa68d67fd0f8f2"
   integrity sha512-+h1lkLKhZMTYjog1VEpJNG7NZJWcuc2DDk/qsqSTRRCOXiLjeQ1d1/udrUGhqMxUgAlwKNZ0cf2uqan5GLuS2A==
 
+erc721a@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/erc721a/-/erc721a-4.0.0.tgz#df9427ffa24c998fb33610bc558febfd932ec8d1"
+  integrity sha512-FXlJ3owiDWGQleXV5t1aE5fgMpzCaP5ZMg9ZamP1Xv4p6JdCj3QlKQDvP8BvT+Jn7p4TtqTcHNUMfh+xoHGhGw==
+
 errno@~0.1.1:
   version "0.1.8"
   resolved "https://registry.yarnpkg.com/errno/-/errno-0.1.8.tgz#8bb3e9c7d463be4976ff888f76b4809ebc2e811f"

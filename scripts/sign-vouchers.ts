@@ -1,6 +1,5 @@
 import { TypedDataDomain, TypedDataField } from "@ethersproject/abstract-signer";
 import { ethers, getNamedAccounts, getChainId } from "hardhat";
-import { ethers as eth } from "ethers";
 import { writeFileSync, readFileSync } from "fs";
 
 type NFTVoucher = {
@@ -41,14 +40,14 @@ async function main() {
   const sigMap = new Map<string, string>();
   await Promise.all(
     whitelist.map(async (addr) => {
-      const redeemer = eth.utils.getAddress(addr);
+      const redeemer = ethers.utils.getAddress(addr);
       const voucher: NFTVoucher = { redeemer };
       const signature: string = await signer._signTypedData(
         domainData,
         VOUCHER_TYPE,
         voucher
       );
-      sigMap.set(redeemer.toLocaleLowerCase(), signature);
+      sigMap.set(redeemer, signature);
       return signature;
     })
   );
