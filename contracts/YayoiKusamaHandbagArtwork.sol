@@ -11,9 +11,9 @@ import "./ERC721A.sol";
  @author Japan NFT Culture Association (https://www.jnca.io)
  */
 contract YayoiKusamaHandbagArtwork is ERC721A, EIP712, Ownable {
-    uint16 private constant MAX_SUPPLY = 7000;
+    uint16 public constant MAX_SUPPLY = 7000;
 
-    uint16 private constant WHITELIST_MAX_SUPPLY = 3000;
+    uint16 public constant WHITELIST_MAX_SUPPLY = 3000;
 
     uint8 private constant BATCH_MINT_SIZE = 5;
 

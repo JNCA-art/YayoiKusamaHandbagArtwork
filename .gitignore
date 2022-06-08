@@ -10,3 +10,4 @@ artifacts
 
 metadata/nft
 deployments/localhost
+.DS_Store
