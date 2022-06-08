@@ -43,7 +43,7 @@ contract MastersDAO is ERC721A, EIP712, Ownable, Pausable {
         string memory initBaseURI,
         address payable receiver,
         uint120 initPrice
-    ) ERC721A("MastersDAO", "M-DAO") EIP712("YKHA", "1") {
+    ) ERC721A("MastersDAO", "M-DAO") EIP712("M-DAO", "1") {
         contractURI = initContractURI;
         _tokenBaseURI = initBaseURI;
         _fundReceiver = receiver;
@@ -110,11 +110,6 @@ contract MastersDAO is ERC721A, EIP712, Ownable, Pausable {
         uint256 quantity
     ) internal override whenNotPaused {
         ERC721A._beforeTokenTransfers(from, to, startTokenId, quantity);
-    }
-
-    /// @dev Override _startTokenId to start from 1
-    function _startTokenId() internal pure override returns (uint256) {
-        return 1;
     }
 
     /// @dev Verify voucher
