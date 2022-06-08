@@ -15,15 +15,19 @@ import "erc721a/contracts/ERC721A.sol";
 contract MastersDAO is ERC721A, EIP712, Ownable, Pausable {
     uint16 public constant MAX_SUPPLY = 10000;
 
-    uint8 public constant BATCH_SIZE = 5;
+    uint8 private constant BATCH_SIZE = 5;
+
+    uint8 private constant MAX_WHITELIST_QUOTA = 10;
 
     string public contractURI;
 
-    string private _tokenBaseURI;
+    string private __baseURI;
 
     address payable private _fundReceiver;
 
     mapping(address => uint8) public whitelistAlreadyMinted;
+
+    mapping(address => uint256) public itemRemains;
 
     struct SaleInfo {
         bool isPublic;
@@ -45,7 +49,7 @@ contract MastersDAO is ERC721A, EIP712, Ownable, Pausable {
         uint120 initPrice
     ) ERC721A("MastersDAO", "M-DAO") EIP712("M-DAO", "1") {
         contractURI = initContractURI;
-        _tokenBaseURI = initBaseURI;
+        __baseURI = initBaseURI;
         _fundReceiver = receiver;
         // sale info
         saleInfo.isPublic = false;
@@ -73,7 +77,7 @@ contract MastersDAO is ERC721A, EIP712, Ownable, Pausable {
         _verify(signature);
         require(totalSupply() + amount <= MAX_SUPPLY, "exceed max supply");
         require(
-            whitelistAlreadyMinted[msgSender] + amount <= 2 * BATCH_SIZE,
+            whitelistAlreadyMinted[msgSender] + amount <= MAX_WHITELIST_QUOTA,
             "exceed whitelist quota"
         );
         whitelistAlreadyMinted[msgSender] += amount;
@@ -82,9 +86,21 @@ contract MastersDAO is ERC721A, EIP712, Ownable, Pausable {
         Address.sendValue(_fundReceiver, msg.value);
     }
 
+    function additionalMint(uint8 amount) external {
+        address msgSender = _msgSenderERC721A();
+        _safeMint(msgSender, amount);
+        itemRemains[msgSender] -= amount;
+    }
+
+    /// @dev Airdrop
+    function airdrop(address to, uint16 amount) external onlyOwner {
+        require(totalSupply() + amount <= MAX_SUPPLY, "exceed max supply");
+        _safeMint(to, amount);
+    }
+
     /// @dev Change base URI to reveal NFT
     function setBaseURI(string calldata newBaseURI) external onlyOwner {
-        _tokenBaseURI = newBaseURI;
+        __baseURI = newBaseURI;
     }
 
     /// @dev Set new price
@@ -97,9 +113,17 @@ contract MastersDAO is ERC721A, EIP712, Ownable, Pausable {
         saleInfo.isPublic = !saleInfo.isPublic;
     }
 
+    /// @dev Set additional supply for certain item NFT contract
+    function setItemSupply(
+        address itemContractAddress,
+        uint256 additionalSupply
+    ) external onlyOwner {
+        itemRemains[itemContractAddress] = additionalSupply;
+    }
+
     /// @dev Override ERC721._baseURI
     function _baseURI() internal view override returns (string memory) {
-        return _tokenBaseURI;
+        return __baseURI;
     }
 
     /// @dev Override _beforeTokenTransfers to integrate Pausable
@@ -118,7 +142,7 @@ contract MastersDAO is ERC721A, EIP712, Ownable, Pausable {
             keccak256(
                 abi.encode(
                     keccak256("NFTVoucher(address redeemer)"),
-                    msg.sender
+                    _msgSenderERC721A()
                 )
             )
         );
