@@ -12,7 +12,9 @@ export const setupTest = deployments.createFixture(
       const splitter = MastersSplitter__factory.connect(splitterAddress, owner);
       const provider = owner.provider;
       const { price } = await contract.saleInfo();
-      const payload = {
+      const tx = initSupply? await contract.airdrop(owner.address, initSupply): undefined;
+      await tx?.wait();
+      return {
         owner,
         users,
         contract,
@@ -22,14 +24,5 @@ export const setupTest = deployments.createFixture(
         baseURI,
         contractURI,
       };
-      if (initSupply) {
-        const tx = await contract.airdrop(owner.address, initSupply);
-        await tx.wait();
-        const supply = await contract.totalSupply();
-        return { ...payload, supply };
-      }
-      else {
-        return payload;
-      }
     }
   )

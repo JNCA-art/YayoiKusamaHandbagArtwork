@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { setupTest } from "./fixture/setup-contracts";
+import { setupTest } from "./fixture/setup-dao";
 import LOCAL_WHITELIST from "../whitelist/whitelist_1337.json";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { ethers } from "hardhat";

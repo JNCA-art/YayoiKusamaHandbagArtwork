@@ -86,10 +86,19 @@ contract MastersDAO is ERC721A, EIP712, Ownable, Pausable {
         Address.sendValue(_fundReceiver, msg.value);
     }
 
-    function additionalMint(uint8 amount) external {
-        address msgSender = _msgSenderERC721A();
-        _safeMint(msgSender, amount);
-        itemRemains[msgSender] -= amount;
+    function additionalMint(address to, uint8 amount) external {
+        address itemAddr = _msgSenderERC721A();
+        uint256 remain = itemRemains[itemAddr];
+        if (remain == 0) return;
+        unchecked {
+            if (amount >= remain) {
+                _safeMint(to, remain);
+                itemRemains[itemAddr] -= remain;
+            } else {
+                _safeMint(to, amount);
+                itemRemains[itemAddr] -= amount;
+            }
+        }
     }
 
     /// @dev Airdrop

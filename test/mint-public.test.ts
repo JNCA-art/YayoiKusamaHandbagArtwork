@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { setupTest } from "./fixture/setup-contracts";
+import { setupTest } from "./fixture/setup-dao";
 
 describe("M-DAO public mint", function () {
   let tx;
