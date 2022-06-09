@@ -13,7 +13,7 @@ const VOUCHER_TYPE: Record<string, TypedDataField[]> = {
 type AddressMap = { [chainId: string]: string };
 export const CONTRACT_ADDRESS: AddressMap = {
   "1": "0x56E7944b4fe5B72148713853B5ed4A51D8DA593b",
-  "4": "0x052D35fEBc8FB4C59cBF45c4E4F195C9E49DC425",
+  "4": "0xe154fa3aF0950952A55805cC144BDc9ABd3ACF3F",
   "1337": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
 };
 
@@ -47,7 +47,7 @@ async function main() {
         VOUCHER_TYPE,
         voucher
       );
-      sigMap.set(redeemer, signature);
+      sigMap.set(redeemer.toLowerCase(), signature);
       return signature;
     })
   );

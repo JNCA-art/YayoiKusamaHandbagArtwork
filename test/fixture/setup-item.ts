@@ -9,6 +9,7 @@ export const setupTest = deployments.createFixture(
       const [owner, ...users] = await ethers.getSigners();
       const contract = MastersDAO__factory.connect(daoAddress, owner);
       const itemNFT = ItemNFT__factory.connect(itemAddress, owner);
+      const itemPrice = await itemNFT.PRICE();
       const provider = owner.provider;
       const tx = additionalSupply? await contract.setItemSupply(itemAddress, additionalSupply): undefined;
       await tx?.wait();
@@ -17,6 +18,7 @@ export const setupTest = deployments.createFixture(
         users,
         contract,
         itemNFT,
+        itemPrice,
         provider,
       };
     }

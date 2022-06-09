@@ -5,7 +5,7 @@ import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { ethers } from "hardhat";
 
 function getSignature(user: SignerWithAddress): any {
-  const userAddress = ethers.utils.getAddress(user.address);
+  const userAddress = user.address.toLowerCase();
   // @ts-ignore
   return LOCAL_WHITELIST[userAddress];
 }
