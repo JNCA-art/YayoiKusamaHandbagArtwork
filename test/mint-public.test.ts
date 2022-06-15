@@ -16,13 +16,13 @@ describe("M-DAO public mint", function () {
     .revertedWith("Ownable: caller is not the owner");
   });
 
-  it("Negative: exceed batch size", async function() {
+  it("Negative: exceed mint quota", async function() {
     const { contract, users, price } = await setupTest();
     tx = await contract.flipPublicSale();
     await tx.wait();
     const amount = 5 + 1;
     await expect(contract.connect(users[4]).mint(amount, { value: price.mul(amount)}))
-    .revertedWith("exceed batch size");
+    .revertedWith("exceed mint quota");
   });
 
   it("Negative: payment too low", async function() {

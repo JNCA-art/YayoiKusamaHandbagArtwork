@@ -2,7 +2,6 @@ import { expect } from "chai";
 import { setupTest } from "./fixture/setup-dao";
 import LOCAL_WHITELIST from "../whitelist/whitelist_1337.json";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
-import { ethers } from "hardhat";
 
 function getSignature(user: SignerWithAddress): any {
   const userAddress = user.address.toLowerCase();
@@ -31,16 +30,14 @@ describe("M-DAO whitelist mint", function () {
     .revertedWith("invalid or unauthorized");
   });
 
-  it("Negative: exceed whitelist quota", async function() {
+  it("Negative: exceed mint quota", async function() {
     const { contract, users, price } = await setupTest();
     const user = users[8];
     const signature = getSignature(user);
-    tx = await contract.connect(user).whitelistMint(signature, 5, { value: price.mul(5) });
-    await tx.wait();
-    tx = await contract.connect(user).whitelistMint(signature, 3, { value: price.mul(3) });
+    tx = await contract.connect(user).whitelistMint(signature, 4, { value: price.mul(4) });
     await tx.wait();
     await expect(contract.connect(user).whitelistMint(signature, 3, { value: price.mul(3) }))
-    .revertedWith("exceed whitelist quota");
+    .revertedWith("exceed mint quota");
   });
 
   it("Negative: payment too high", async function() {
@@ -70,7 +67,6 @@ describe("M-DAO whitelist mint", function () {
     const signature = getSignature(user);
     tx = await contract.connect(users[8]).whitelistMint(signature, amount, { value: fund });
     await tx.wait();
-    const currentSaleInfo = await contract.saleInfo();
     expect(await contract.totalSupply()).equal(amount);
     expect(balanceBefore.add(fund)).equal(await provider.getBalance(splitter.address));
   });
