@@ -2,10 +2,10 @@ import { expect } from "chai";
 import { setupTest } from "./fixture/setup-item";
 import { ethers } from "hardhat";
 
-describe("M-DAO supply", function () {
+describe("M-DAO additional supply", function () {
   let tx, receipt;
 
-  it("Postive: exceed additional supply", async function() {
+  it("Poistive: exceed additional supply", async function() {
     const { contract, itemNFT, itemPrice, users } = await setupTest(5);
     const user1 = users[11];
     tx = await itemNFT.connect(user1).mint(7, { value: itemPrice.mul(7) });
@@ -38,6 +38,4 @@ describe("M-DAO supply", function () {
     expect(await contract.totalSupply()).equal(amount);
     expect(receipt.logs.length).equal(6);
   });
-
-
 });

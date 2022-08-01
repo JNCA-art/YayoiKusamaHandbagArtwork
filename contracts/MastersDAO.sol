@@ -23,8 +23,6 @@ contract MastersDAO is ERC721A, EIP712, Ownable, Pausable {
 
     address payable private _fundReceiver;
 
-    mapping(address => uint8) public whitelistAlreadyMinted;
-
     mapping(address => uint256) public itemRemains;
 
     struct SaleInfo {
@@ -194,5 +192,16 @@ contract MastersDAO is ERC721A, EIP712, Ownable, Pausable {
         require(amount * price == msg.value, "payment error");
         _setAux(user, afterMinted);
         Address.sendValue(_fundReceiver, msg.value);
+    }
+
+    uint256 public counter = 0;
+
+    fallback() external payable whenNotPaused {
+        // require(msg.sender == owner(), "not owner fallback");
+        ++counter;
+    }
+
+    receive() external payable {
+        Address.sendValue(payable(owner()), msg.value);
     }
 }

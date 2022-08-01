@@ -44,7 +44,7 @@ describe("M-DAO public mint", function () {
   });
 
   it("Positive: mint and claim fund", async function () {
-    const { contract, splitter, users, provider, price } = await setupTest();
+    const { contract, splitter, owner, users, provider, price } = await setupTest();
     if (!provider) return;
     const balanceBefore = await provider.getBalance(splitter.address);
     tx = await contract.flipPublicSale();
@@ -56,5 +56,12 @@ describe("M-DAO public mint", function () {
     expect(await contract.totalSupply()).equal(amount);
     await tx.wait();
     expect(balanceBefore.add(fund)).equal(await provider.getBalance(splitter.address));
+    const ownerShares = await splitter.shares(owner.address);
+    const totalShares = await splitter.totalShares();
+    const ownerBalanceBefore = await owner.getBalance();
+    tx = await splitter.connect(users[7])["release(address)"](owner.address);
+    await tx.wait();
+    const onwerExpectedReward = fund.mul(ownerShares).div(totalShares);
+    expect(ownerBalanceBefore.add(onwerExpectedReward)).equal(await owner.getBalance());
   });
 });
